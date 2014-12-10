@@ -38,7 +38,7 @@
 #include <linux/jiffies.h>
 #include <mach/board.h>
 #include <mach/board_htc.h>
-#define D(x...) pr_info(x)
+#define D(x...) pr_debug(x)
 #define I2C_RETRY_COUNT 10
 #define POLLING_PROXIMITY 1
 #define MFG_MODE 1
@@ -2561,7 +2561,6 @@ int power_key_check_in_pocket(void)
 	D("[cm3629] %s ls_adc = %d, ls_level = %d, ls_dark %d\n", __func__, ls_adc, ls_level, ls_dark);
 
 	psensor_enable(lpi);
-	msleep(50);
 	ret = get_ps_adc_value(&ps1_adc, &ps2_adc);
 	if (ps1_adc > pocket_thd)
 		ps_near = 1;
