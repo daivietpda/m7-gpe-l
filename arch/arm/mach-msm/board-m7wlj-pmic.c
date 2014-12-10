@@ -27,14 +27,14 @@
 #include <mach/gpiomux.h>
 #include <mach/restart.h>
 #include "devices.h"
-#include "board-m7.h"
-#include <asm/setup.h>
-
+#include "board-m7wl.h"
 #ifdef CONFIG_SMB349_CHARGER
 #include "linux/i2c/smb349.h"
 #endif
 
-void m7_pm8xxx_adc_device_register(void);
+#include <asm/setup.h>
+
+void m7wl_pm8xxx_adc_device_register(void);
 
 struct pm8xxx_gpio_init {
 	unsigned			gpio;
@@ -127,7 +127,6 @@ static struct pm8xxx_gpio_init pm8921_gpios[] __initdata = {
 static struct pm8xxx_gpio_init pm8921_cdp_kp_gpios[] __initdata = {
 	
 };
-
 static struct pm8xxx_mpp_init pm8xxx_mpps[] __initdata = {
 	PM8921_MPP_INIT(3, D_OUTPUT, PM8921_MPP_DIG_LEVEL_VPH, DOUT_CTRL_LOW),
 	
@@ -141,7 +140,7 @@ static struct pm8xxx_mpp_init pm8xxx_mpps[] __initdata = {
 #endif
 };
 
-void __init m7_pm8xxx_gpio_mpp_init(void)
+void __init m7wl_pm8xxx_gpio_mpp_init(void)
 {
 	int i, rc;
 
@@ -174,13 +173,13 @@ void __init m7_pm8xxx_gpio_mpp_init(void)
 	}
 }
 
-static struct pm8xxx_pwrkey_platform_data m7_pm8921_pwrkey_pdata = {
+static struct pm8xxx_pwrkey_platform_data m7wl_pm8921_pwrkey_pdata = {
 	.pull_up		= 1,
 	.kpd_trigger_delay_us	= 15625,
 	.wakeup			= 1,
 };
 
-static struct pm8xxx_misc_platform_data m7_pm8921_misc_pdata = {
+static struct pm8xxx_misc_platform_data m7wl_pm8921_misc_pdata = {
 	.priority		= 0,
 };
 
@@ -256,30 +255,15 @@ static struct pm8xxx_led_configure pm8921_led_info[] = {
 				0, 0, 0, 0, 0, 0, 0, 0},
 		.lpm_power = led_power_LPM,
 	},
-        [1] = {
-                .name           = "green",
-                .flags          = PM8XXX_ID_LED_1,
-                .function_flags = LED_PWM_FUNCTION | LED_BLINK_FUNCTION,
-		.out_current    = 2,
-		.pwm_coefficient = 5,
-		.blink_duty_per_2sec = 10000,
-        },
-        [2] = {
-                .name           = "amber",
-                .flags          = PM8XXX_ID_LED_2,
-                .function_flags = LED_PWM_FUNCTION | LED_BLINK_FUNCTION,
-		.out_current    = 3,
-		.pwm_coefficient = 5,
-        },
 };
 
-static struct pm8xxx_led_platform_data m7_pm8921_leds_pdata = {
+static struct pm8xxx_led_platform_data m7wl_pm8921_leds_pdata = {
 	.num_leds = ARRAY_SIZE(pm8921_led_info),
 	.leds = pm8921_led_info,
 };
 
 
-static struct pm8xxx_adc_amux m7_pm8921_adc_channels_data[] = {
+static struct pm8xxx_adc_amux m7wl_pm8921_adc_channels_data[] = {
 	{"vcoin", CHANNEL_VCOIN, CHAN_PATH_SCALING2, AMUX_RSV1,
 		ADC_DECIMATION_TYPE2, ADC_SCALE_DEFAULT},
 	{"vbat", CHANNEL_VBAT, CHAN_PATH_SCALING2, AMUX_RSV1,
@@ -314,12 +298,12 @@ static struct pm8xxx_adc_amux m7_pm8921_adc_channels_data[] = {
 		ADC_DECIMATION_TYPE2, ADC_SCALE_DEFAULT},
 };
 
-static struct pm8xxx_adc_properties m7_pm8921_adc_data = {
+static struct pm8xxx_adc_properties m7wl_pm8921_adc_data = {
 	.adc_vdd_reference	= 1800, 
 	.bitresolution		= 15,
 	.bipolar                = 0,
 };
-static const struct pm8xxx_adc_map_pt m7_adcmap_btm_table[] = {
+static const struct pm8xxx_adc_map_pt m7wls_adcmap_btm_table[] = {
 	{-200,	1671},
 	{-190,	1663},
 	{-180,	1654},
@@ -423,31 +407,31 @@ static const struct pm8xxx_adc_map_pt m7_adcmap_btm_table[] = {
 };
 
 static struct pm8xxx_adc_map_table pm8xxx_adcmap_btm_table = {
-	.table = m7_adcmap_btm_table,
-	.size = ARRAY_SIZE(m7_adcmap_btm_table),
+	.table = m7wls_adcmap_btm_table,
+	.size = ARRAY_SIZE(m7wls_adcmap_btm_table),
 };
 
-static struct pm8xxx_adc_platform_data m7_pm8921_adc_pdata = {
-	.adc_channel		= m7_pm8921_adc_channels_data,
-	.adc_num_board_channel	= ARRAY_SIZE(m7_pm8921_adc_channels_data),
-	.adc_prop		= &m7_pm8921_adc_data,
+static struct pm8xxx_adc_platform_data m7wl_pm8921_adc_pdata = {
+	.adc_channel		= m7wl_pm8921_adc_channels_data,
+	.adc_num_board_channel	= ARRAY_SIZE(m7wl_pm8921_adc_channels_data),
+	.adc_prop		= &m7wl_pm8921_adc_data,
 	.adc_mpp_base		= PM8921_MPP_PM_TO_SYS(1),
 	.adc_map_btm_table	= &pm8xxx_adcmap_btm_table,
-	.pm8xxx_adc_device_register	= m7_pm8xxx_adc_device_register,
+	.pm8xxx_adc_device_register	= m7wl_pm8xxx_adc_device_register,
 };
 
 static struct pm8xxx_mpp_platform_data
-m7_pm8921_mpp_pdata __devinitdata = {
+m7wl_pm8921_mpp_pdata __devinitdata = {
 	.mpp_base	= PM8921_MPP_PM_TO_SYS(1),
 };
 
 static struct pm8xxx_gpio_platform_data
-m7_pm8921_gpio_pdata __devinitdata = {
+m7wl_pm8921_gpio_pdata __devinitdata = {
 	.gpio_base	= PM8921_GPIO_PM_TO_SYS(1),
 };
 
 static struct pm8xxx_irq_platform_data
-m7_pm8921_irq_pdata __devinitdata = {
+m7wl_pm8921_irq_pdata __devinitdata = {
 	.irq_base		= PM8921_IRQ_BASE,
 	.devirq			= MSM_GPIO_TO_INT(PM8921_APC_USR_IRQ_N),
 	.irq_trigger_flag	= IRQF_TRIGGER_LOW,
@@ -455,7 +439,7 @@ m7_pm8921_irq_pdata __devinitdata = {
 };
 
 static struct pm8xxx_rtc_platform_data
-m7_pm8921_rtc_pdata = {
+m7wl_pm8921_rtc_pdata = {
 	.rtc_write_enable       = true,
 #ifdef CONFIG_HTC_OFFMODE_ALARM
 	.rtc_alarm_powerup      = true,
@@ -464,21 +448,22 @@ m7_pm8921_rtc_pdata = {
 #endif
 };
 
-static int m7_pm8921_therm_mitigation[] = {
+static int m7wl_pm8921_therm_mitigation[] = {
 	1100,
 	700,
 	600,
 	225,
 };
 
-
 static struct htc_charger
 smb_icharger = {
 	.name = "smb349",
 #ifdef CONFIG_SMB349_CHARGER
 	.get_charging_source = smb349_get_charging_src,
+	.is_charging_enabled = smb349_is_charging_enabled,
 	.get_charging_enabled = smb349_get_charging_enabled,
 	.set_charger_enable = smb349_enable_charging,
+	.event_notify = smb349_event_notify,
 	.set_pwrsrc_enable = smb349_enable_pwrsrc,
 	.set_pwrsrc_and_charger_enable = smb349_set_pwrsrc_and_charger_enable,
 	.set_limit_charge_enable = smb349_limit_charge_enable,
@@ -520,14 +505,12 @@ pm8921_chg_pdata __devinitdata = {
 	.cool_bat_voltage	= 4200,
 	.warm_bat_voltage	= 4000,
 	.mbat_in_gpio		= 0, 
-	.cable_in_irq		= PM8921_GPIO_IRQ(PM8921_IRQ_BASE, CABLE_IN_N),
-	.cable_in_gpio		= PM8921_GPIO_PM_TO_SYS(CABLE_IN_N),
 	.is_embeded_batt	= 1,
 	.eoc_ibat_thre_ma	= 50,
 	.ichg_threshold_ua = -1200000,
 	.ichg_regulation_thr_ua 	= -375000,
-	.thermal_mitigation	= m7_pm8921_therm_mitigation,
-	.thermal_levels		= ARRAY_SIZE(m7_pm8921_therm_mitigation),
+	.thermal_mitigation	= m7wl_pm8921_therm_mitigation,
+	.thermal_levels		= ARRAY_SIZE(m7wl_pm8921_therm_mitigation),
 	.cold_thr = PM_SMBC_BATT_TEMP_COLD_THR__HIGH,
 	.hot_thr = PM_SMBC_BATT_TEMP_HOT_THR__LOW,
 	.ext_usb = &smb_ext_chg,
@@ -535,7 +518,7 @@ pm8921_chg_pdata __devinitdata = {
 };
 
 static struct pm8xxx_ccadc_platform_data
-m7_pm8xxx_ccadc_pdata = {
+m7wl_pm8xxx_ccadc_pdata = {
 	.r_sense		= 10,
 	.calib_delay_ms		= 600000,
 };
@@ -547,10 +530,8 @@ pm8921_bms_pdata __devinitdata = {
 	.v_failure		= 3000,
 	.max_voltage_uv		= MAX_VOLTAGE_MV * 1000,
 	.rconn_mohm		= 0,
-	.store_batt_data_soc_thre	= 100,
 	.criteria_sw_est_ocv			= 86400000, 
 	.rconn_mohm_sw_est_ocv		= 10,
-	.qb_mode_cc_criteria_uAh = 10000, 
 };
 
 static int __init check_dq_setup(char *str)
@@ -573,29 +554,28 @@ __setup("androidboot.dq=", check_dq_setup);
 static struct pm8xxx_vibrator_platform_data pm8xxx_vib_pdata = {
 	.initial_vibrate_ms = 0,
 	.max_timeout_ms = 15000,
-	.level_mV = 2000,
-	.threshold = 500,
+	.level_mV = 3000,
 	};
 
 static struct pm8921_platform_data
-m7_pm8921_platform_data __devinitdata = {
-	.regulator_pdatas	= m7_pm8921_regulator_pdata,
-	.irq_pdata		= &m7_pm8921_irq_pdata,
-	.gpio_pdata		= &m7_pm8921_gpio_pdata,
-	.mpp_pdata		= &m7_pm8921_mpp_pdata,
-	.rtc_pdata		= &m7_pm8921_rtc_pdata,
-	.pwrkey_pdata	= &m7_pm8921_pwrkey_pdata,
-	.misc_pdata		= &m7_pm8921_misc_pdata,
-	.leds_pdata		= &m7_pm8921_leds_pdata,
-	.adc_pdata		= &m7_pm8921_adc_pdata,
+m7wl_pm8921_platform_data __devinitdata = {
+	.regulator_pdatas	= m7wl_pm8921_regulator_pdata,
+	.irq_pdata		= &m7wl_pm8921_irq_pdata,
+	.gpio_pdata		= &m7wl_pm8921_gpio_pdata,
+	.mpp_pdata		= &m7wl_pm8921_mpp_pdata,
+	.rtc_pdata		= &m7wl_pm8921_rtc_pdata,
+	.pwrkey_pdata	= &m7wl_pm8921_pwrkey_pdata,
+	.misc_pdata		= &m7wl_pm8921_misc_pdata,
+	.leds_pdata		= &m7wl_pm8921_leds_pdata,
+	.adc_pdata		= &m7wl_pm8921_adc_pdata,
 	.charger_pdata		= &pm8921_chg_pdata,
 	.bms_pdata		= &pm8921_bms_pdata,
-	.ccadc_pdata		= &m7_pm8xxx_ccadc_pdata,
+	.ccadc_pdata		= &m7wl_pm8xxx_ccadc_pdata,
 	.vibrator_pdata         = &pm8xxx_vib_pdata,
 };
 
 static struct pm8xxx_irq_platform_data
-m7_pm8821_irq_pdata __devinitdata = {
+m7wl_pm8821_irq_pdata __devinitdata = {
 	.irq_base		= PM8821_IRQ_BASE,
 	.devirq			= PM8821_SEC_IRQ_N,
 	.irq_trigger_flag	= IRQF_TRIGGER_HIGH,
@@ -603,58 +583,48 @@ m7_pm8821_irq_pdata __devinitdata = {
 };
 
 static struct pm8xxx_mpp_platform_data
-m7_pm8821_mpp_pdata __devinitdata = {
+m7wl_pm8821_mpp_pdata __devinitdata = {
 	.mpp_base	= PM8821_MPP_PM_TO_SYS(1),
 };
 
 static struct pm8821_platform_data
-m7_pm8821_platform_data __devinitdata = {
-	.irq_pdata	= &m7_pm8821_irq_pdata,
-	.mpp_pdata	= &m7_pm8821_mpp_pdata,
+m7wl_pm8821_platform_data __devinitdata = {
+	.irq_pdata	= &m7wl_pm8821_irq_pdata,
+	.mpp_pdata	= &m7wl_pm8821_mpp_pdata,
 };
 
-static struct msm_ssbi_platform_data m7_ssbi_pm8921_pdata __devinitdata = {
+static struct msm_ssbi_platform_data m7wl_ssbi_pm8921_pdata __devinitdata = {
 	.controller_type = MSM_SBI_CTRL_PMIC_ARBITER,
 	.slave	= {
 		.name		= "pm8921-core",
-		.platform_data	= &m7_pm8921_platform_data,
+		.platform_data	= &m7wl_pm8921_platform_data,
 	},
 };
 
-static struct msm_ssbi_platform_data m7_ssbi_pm8821_pdata __devinitdata = {
+static struct msm_ssbi_platform_data m7wl_ssbi_pm8821_pdata __devinitdata = {
 	.controller_type = MSM_SBI_CTRL_PMIC_ARBITER,
 	.slave	= {
 		.name		= "pm8821-core",
-		.platform_data	= &m7_pm8821_platform_data,
+		.platform_data	= &m7wl_pm8821_platform_data,
 	},
 };
 
-void __init m7_init_pmic(void)
+void __init m7wl_init_pmic(void)
 {
-	if (system_rev >= XB) {
-		
-		pm8921_chg_pdata.ext_usb = NULL;
-	}
-
-	if (system_rev < PVT) {
-		pm8921_chg_pdata.cable_in_irq = 0;
-		pm8921_chg_pdata.cable_in_gpio = 0;
-	}
 	pmic_reset_irq = PM8921_IRQ_BASE + PM8921_RESOUT_IRQ;
 	apq8064_device_ssbi_pmic1.dev.platform_data =
-						&m7_ssbi_pm8921_pdata;
+						&m7wl_ssbi_pm8921_pdata;
 	apq8064_device_ssbi_pmic2.dev.platform_data =
-				&m7_ssbi_pm8821_pdata;
-	m7_pm8921_platform_data.num_regulators =
-					m7_pm8921_regulator_pdata_len;
+				&m7wl_ssbi_pm8821_pdata;
+	m7wl_pm8921_platform_data.num_regulators =
+					m7wl_pm8921_regulator_pdata_len;
 
 }
 
-void __init m7_init_pmic_register_cam_cb(void *cam_vcm_on_cb, void *cam_vcm_off_cb)
+void __init m7wlj_init_pmic_register_cam_cb(void *cam_vcm_on_cb, void *cam_vcm_off_cb)
 {
 	if (cam_vcm_on_cb)
 		pm8xxx_vib_pdata.camera_cb = cam_vcm_on_cb;
 	if (cam_vcm_off_cb)
 		pm8xxx_vib_pdata.camera_off_cb = cam_vcm_off_cb;
 }
-

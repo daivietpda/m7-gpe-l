@@ -9,13 +9,13 @@
 #include <linux/skbuff.h>
 #include <linux/wifi_tiwlan.h>
 
-#include "board-m7.h"
-#include "board-m7-wifi.h"
+#include "board-m7wl.h"
+#include "board-m7wl-wifi.h"
 
-int m7_wifi_power(int on);
-int m7_wifi_reset(int on);
-int m7_wifi_set_carddetect(int on);
-int m7_wifi_get_mac_addr(unsigned char *buf);
+int m7wl_wifi_power(int on);
+int m7wl_wifi_reset(int on);
+int m7wl_wifi_set_carddetect(int on);
+int m7wl_wifi_get_mac_addr(unsigned char *buf);
 
 #define PREALLOC_WLAN_NUMBER_OF_SECTIONS	4
 #define PREALLOC_WLAN_NUMBER_OF_BUFFERS		160
@@ -44,7 +44,7 @@ static wifi_mem_prealloc_t wifi_mem_array[PREALLOC_WLAN_NUMBER_OF_SECTIONS] = {
 	{ NULL, (WLAN_SECTION_SIZE_3 + PREALLOC_WLAN_SECTION_HEADER) }
 };
 
-static void *m7_wifi_mem_prealloc(int section, unsigned long size)
+static void *m7wl_wifi_mem_prealloc(int section, unsigned long size)
 {
 	if (section == PREALLOC_WLAN_NUMBER_OF_SECTIONS)
 		return wlan_static_skb;
@@ -55,7 +55,7 @@ static void *m7_wifi_mem_prealloc(int section, unsigned long size)
 	return wifi_mem_array[section].mem_ptr;
 }
 
-int __init m7_init_wifi_mem(void)
+int __init m7wl_init_wifi_mem(void)
 {
 	int i;
 
@@ -63,7 +63,7 @@ int __init m7_init_wifi_mem(void)
 		if (i < (WLAN_SKB_BUF_NUM/2))
 			wlan_static_skb[i] = dev_alloc_skb(PAGE_SIZE*2);
 		else
-			wlan_static_skb[i] = dev_alloc_skb(PAGE_SIZE*16);
+			wlan_static_skb[i] = dev_alloc_skb(PAGE_SIZE*4);
 	}
 	for (i = 0; (i < PREALLOC_WLAN_NUMBER_OF_SECTIONS); i++) {
 		wifi_mem_array[i].mem_ptr = kmalloc(wifi_mem_array[i].size,
@@ -74,7 +74,7 @@ int __init m7_init_wifi_mem(void)
 	return 0;
 }
 
-static struct resource m7_wifi_resources[] = {
+static struct resource m7wl_wifi_resources[] = {
 	[0] = {
 		.name		= "bcmdhd_wlan_irq",
 		.start		= PM8921_GPIO_IRQ(PM8921_IRQ_BASE, WL_HOST_WAKE),
@@ -87,25 +87,25 @@ static struct resource m7_wifi_resources[] = {
 	},
 };
 
-static struct wifi_platform_data m7_wifi_control = {
-	.set_power      = m7_wifi_power,
-	.set_reset      = m7_wifi_reset,
-	.set_carddetect = m7_wifi_set_carddetect,
-	.mem_prealloc   = m7_wifi_mem_prealloc,
-	.get_mac_addr	= m7_wifi_get_mac_addr,
+static struct wifi_platform_data m7wl_wifi_control = {
+	.set_power      = m7wl_wifi_power,
+	.set_reset      = m7wl_wifi_reset,
+	.set_carddetect = m7wl_wifi_set_carddetect,
+	.mem_prealloc   = m7wl_wifi_mem_prealloc,
+	.get_mac_addr	= m7wl_wifi_get_mac_addr,
 };
 
-static struct platform_device m7_wifi_device = {
+static struct platform_device m7wl_wifi_device = {
 	.name           = "bcmdhd_wlan",
 	.id             = 1,
-	.num_resources  = ARRAY_SIZE(m7_wifi_resources),
-	.resource       = m7_wifi_resources,
+	.num_resources  = ARRAY_SIZE(m7wl_wifi_resources),
+	.resource       = m7wl_wifi_resources,
 	.dev            = {
-		.platform_data = &m7_wifi_control,
+		.platform_data = &m7wl_wifi_control,
 	},
 };
 
-static unsigned m7_wifi_update_nvs(char *str)
+static unsigned m7wl_wifi_update_nvs(char *str)
 {
 #define NVS_LEN_OFFSET		0x0C
 #define NVS_DATA_OFFSET		0x40
@@ -227,7 +227,7 @@ get_mac_from_wifi_nvs_ram(char *buf, unsigned int buf_len)
 }
 
 #define ETHER_ADDR_LEN 6
-int m7_wifi_get_mac_addr(unsigned char *buf)
+int m7wl_wifi_get_mac_addr(unsigned char *buf)
 {
 	static u8 ether_mac_addr[] = {0x00, 0x11, 0x22, 0x33, 0x44, 0xFF};
 	char mac[WIFI_MAX_MAC_LEN];
@@ -249,13 +249,13 @@ int m7_wifi_get_mac_addr(unsigned char *buf)
 
 	memcpy(buf, ether_mac_addr, sizeof(ether_mac_addr));
 
-	printk(KERN_INFO"m7_wifi_get_mac_addr = %02x %02x %02x %02x %02x %02x \n",
+	printk(KERN_INFO"m7wl_wifi_get_mac_addr = %02x %02x %02x %02x %02x %02x \n",
 		ether_mac_addr[0], ether_mac_addr[1], ether_mac_addr[2], ether_mac_addr[3], ether_mac_addr[4], ether_mac_addr[5]);
 
 	return 0;
 }
 
-int __init m7_wifi_init(void)
+int __init m7wl_wifi_init(void)
 {
 	int ret;
 
@@ -263,12 +263,12 @@ int __init m7_wifi_init(void)
 #ifdef HW_OOB
 	strip_nvs_param("sd_oobonly");
 #else
-	m7_wifi_update_nvs("sd_oobonly=1\n");
+	m7wl_wifi_update_nvs("sd_oobonly=1\n");
 #endif
-	m7_wifi_update_nvs("btc_params80=0\n");
-	m7_wifi_update_nvs("btc_params6=30\n");
-	m7_init_wifi_mem();
-	ret = platform_device_register(&m7_wifi_device);
+	m7wl_wifi_update_nvs("btc_params80=0\n");
+	m7wl_wifi_update_nvs("btc_params6=30\n");
+	m7wl_init_wifi_mem();
+	ret = platform_device_register(&m7wl_wifi_device);
 	return ret;
 }
 

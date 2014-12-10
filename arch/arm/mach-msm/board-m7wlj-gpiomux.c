@@ -23,7 +23,7 @@
 #include <mach/gpiomux.h>
 #include <mach/socinfo.h>
 #include "devices.h"
-#include "board-m7.h"
+#include "board-m7wlj.h"
 
 
 static struct gpiomux_setting  mi2s_rx_sclk = {
@@ -138,7 +138,7 @@ static struct gpiomux_setting gpio_spi_cs_config = {
 	.pull = GPIOMUX_PULL_UP,
 };
 
-struct msm_gpiomux_config m7_ethernet_configs[] = {
+struct msm_gpiomux_config m7wlj_ethernet_configs[] = {
 };
 #endif
 
@@ -199,7 +199,7 @@ static struct gpiomux_setting gpio_i2c_config = {
 static struct gpiomux_setting gpio_i2c_config_sus = {
 	.func = GPIOMUX_FUNC_1,
 	.drv = GPIOMUX_DRV_6MA,
-	.pull = GPIOMUX_PULL_KEEPER,
+	.pull = GPIOMUX_PULL_UP,
 };
 
 static struct gpiomux_setting cdc_mclk = {
@@ -230,7 +230,7 @@ static struct gpiomux_setting wcnss_5wire_active_cfg = {
 
 static struct gpiomux_setting slimbus = {
 	.func = GPIOMUX_FUNC_1,
-	.drv = GPIOMUX_DRV_16MA,
+	.drv = GPIOMUX_DRV_6MA,
 	.pull = GPIOMUX_PULL_KEEPER,
 };
 
@@ -331,7 +331,7 @@ static struct gpiomux_setting hsic_wakeup_sus_cfg = {
 	.pull = GPIOMUX_PULL_DOWN,
 	.dir = GPIOMUX_IN,
 };
-
+#if 0
 static struct gpiomux_setting modem_lte_frame_sync_act_cfg = {
 	.func = GPIOMUX_FUNC_GPIO,
 	.drv = GPIOMUX_DRV_4MA,
@@ -347,7 +347,6 @@ static struct gpiomux_setting modem_lte_frame_sync_sus_cfg = {
 	.dir = GPIOMUX_OUT_LOW,
 };
 
-#if 0
 static struct gpiomux_setting cyts_resout_sus_cfg = {
 	.func = GPIOMUX_FUNC_GPIO,
 	.drv = GPIOMUX_DRV_6MA,
@@ -407,7 +406,7 @@ static struct msm_gpiomux_config cyts_gpio_configs[] __initdata = {
 	},
 };
 #endif
-static struct msm_gpiomux_config m7_hsic_configs[] = {
+static struct msm_gpiomux_config m7wlj_hsic_configs[] = {
 	{
 		.gpio = 88,               
 		.settings = {
@@ -427,13 +426,6 @@ static struct msm_gpiomux_config m7_hsic_configs[] = {
 		.settings = {
 			[GPIOMUX_ACTIVE] = &hsic_wakeup_act_cfg,
 			[GPIOMUX_SUSPENDED] = &hsic_wakeup_sus_cfg,
-		},
-	},
-	{
-		.gpio = 60,				
-		.settings = {
-			[GPIOMUX_ACTIVE] = &modem_lte_frame_sync_act_cfg,
-			[GPIOMUX_SUSPENDED] = &modem_lte_frame_sync_sus_cfg,
 		},
 	},
 };
@@ -487,10 +479,11 @@ static struct msm_gpiomux_config mhl_configs[] __initdata = {
 	},
 };
 
-static struct gpiomux_setting hdmi_suspend_pd_cfg = {
+static struct gpiomux_setting hdmi_suspend_pu_cfg = {
 	.func = GPIOMUX_FUNC_GPIO,
 	.drv = GPIOMUX_DRV_2MA,
-	.pull = GPIOMUX_PULL_DOWN,
+	.pull = GPIOMUX_PULL_UP,
+	.dir = GPIOMUX_IN,
 };
 
 static struct gpiomux_setting hdmi_suspend_np_cfg = {
@@ -530,13 +523,13 @@ static struct msm_gpiomux_config hdmi_configs[] __initdata = {
 		.gpio = HDMI_HPLG_DET,
 		.settings = {
 			[GPIOMUX_ACTIVE]    = &hdmi_active_2_cfg,
-			[GPIOMUX_SUSPENDED] = &hdmi_suspend_pd_cfg,
+			[GPIOMUX_SUSPENDED] = &hdmi_suspend_pu_cfg,
 		},
 	},
 };
 #endif
 
-static struct msm_gpiomux_config m7_gsbi_configs[] __initdata = {
+static struct msm_gpiomux_config m7wlj_gsbi_configs[] __initdata = {
 	{
 		.gpio      = 21,		
 		.settings = {
@@ -698,7 +691,7 @@ static struct msm_gpiomux_config m7_gsbi_configs[] __initdata = {
 	},
 };
 
-static struct msm_gpiomux_config m7_slimbus_config[] __initdata = {
+static struct msm_gpiomux_config m7wlj_slimbus_config[] __initdata = {
 	{
 		.gpio   = 40,           
 		.settings = {
@@ -713,7 +706,7 @@ static struct msm_gpiomux_config m7_slimbus_config[] __initdata = {
 	},
 };
 
-static struct msm_gpiomux_config m7_audio_codec_configs[] __initdata = {
+static struct msm_gpiomux_config m7wlj_audio_codec_configs[] __initdata = {
 	{
 		.gpio = 39,
 		.settings = {
@@ -729,9 +722,9 @@ static struct msm_gpiomux_config m7_audio_codec_configs[] __initdata = {
 };
 
 #if 0
-static struct msm_gpiomux_config m7_ext_regulator_configs[] __initdata = {
+static struct msm_gpiomux_config m7wlj_ext_regulator_configs[] __initdata = {
 	{
-		.gpio = m7_EXT_3P3V_REG_EN_GPIO,
+		.gpio = m7wlj_EXT_3P3V_REG_EN_GPIO,
 		.settings = {
 			[GPIOMUX_SUSPENDED] = &ext_regulator_config,
 		},
@@ -796,14 +789,14 @@ static struct msm_gpiomux_config mdm_configs[] __initdata = {
 	},
 	
 	{
-		.gpio = 59,
+		.gpio = 62,
 		.settings = {
 			[GPIOMUX_SUSPENDED] = &ap2mdm_pon_reset_n_cfg,
 		}
 	},
 };
 #endif
-
+#if 0
 static struct gpiomux_setting gpio_rotate_key_act_config = {
 	.pull = GPIOMUX_PULL_UP,
 	.drv = GPIOMUX_DRV_8MA,
@@ -816,7 +809,7 @@ static struct gpiomux_setting gpio_rotate_key_sus_config = {
 	.func = GPIOMUX_FUNC_GPIO,
 };
 
-struct msm_gpiomux_config m7_rotate_key_config[] = {
+struct msm_gpiomux_config m7wlj_rotate_key_config[] = {
 	{
 		.gpio = 46,
 		.settings = {
@@ -825,8 +818,8 @@ struct msm_gpiomux_config m7_rotate_key_config[] = {
 		}
 	},
 };
-#if 0
-static struct msm_gpiomux_config m7_mxt_configs[] __initdata = {
+
+static struct msm_gpiomux_config m7wlj_mxt_configs[] __initdata = {
 	{	
 		.gpio = 6,
 		.settings = {
@@ -875,7 +868,7 @@ static struct msm_gpiomux_config wcnss_5wire_interface[] = {
 	},
 };
 #endif
-void __init m7_init_gpiomux(void)
+void __init m7wlj_init_gpiomux(void)
 {
 	int rc;
 
@@ -886,21 +879,21 @@ void __init m7_init_gpiomux(void)
 	}
 
 #if defined(CONFIG_KS8851) || defined(CONFIG_KS8851_MODULE)
-	msm_gpiomux_install(m7_ethernet_configs,
-			ARRAY_SIZE(m7_ethernet_configs));
+	msm_gpiomux_install(m7wlj_ethernet_configs,
+			ARRAY_SIZE(m7wlj_ethernet_configs));
 #endif
 #if 0
 	msm_gpiomux_install(wcnss_5wire_interface,
 			ARRAY_SIZE(wcnss_5wire_interface));
 #endif
-	msm_gpiomux_install(m7_gsbi_configs,
-			ARRAY_SIZE(m7_gsbi_configs));
+	msm_gpiomux_install(m7wlj_gsbi_configs,
+			ARRAY_SIZE(m7wlj_gsbi_configs));
 
-	msm_gpiomux_install(m7_slimbus_config,
-			ARRAY_SIZE(m7_slimbus_config));
+	msm_gpiomux_install(m7wlj_slimbus_config,
+			ARRAY_SIZE(m7wlj_slimbus_config));
 
-	msm_gpiomux_install(m7_audio_codec_configs,
-			ARRAY_SIZE(m7_audio_codec_configs));
+	msm_gpiomux_install(m7wlj_audio_codec_configs,
+			ARRAY_SIZE(m7wlj_audio_codec_configs));
 
 	msm_gpiomux_install(msm8960_mi2s_rx_configs,
 		ARRAY_SIZE(msm8960_mi2s_rx_configs));
@@ -924,8 +917,8 @@ void __init m7_init_gpiomux(void)
 #endif
 
 #ifdef CONFIG_USB_EHCI_MSM_HSIC
-	msm_gpiomux_install(m7_hsic_configs,
-		ARRAY_SIZE(m7_hsic_configs));
+	msm_gpiomux_install(m7wlj_hsic_configs,
+		ARRAY_SIZE(m7wlj_hsic_configs));
 #endif
 
 }

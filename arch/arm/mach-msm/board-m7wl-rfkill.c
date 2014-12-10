@@ -23,7 +23,7 @@
 #include <linux/mfd/pm8xxx/pm8921.h>
 #include <mach/htc_4335_wl_reg.h>
 
-#include "board-m7.h"
+#include "board-m7wl.h"
 
 #include <linux/miscdevice.h>
 #include <asm/uaccess.h>
@@ -151,7 +151,9 @@ static void bcm_btlock_exit(void)
 static struct rfkill *bt_rfk;
 static const char bt_name[] = "bcm4334";
 
+#if (defined (CONFIG_MACH_DUMMY) || defined(CONFIG_MACH_DUMMY))
 extern unsigned int system_rev;
+#endif
 
 struct pm8xxx_gpio_init {
 	unsigned			gpio;
@@ -175,7 +177,7 @@ struct pm8xxx_gpio_init {
 	} \
 }
 
-struct pm8xxx_gpio_init m7_bt_pmic_gpio[] = {
+struct pm8xxx_gpio_init m7wl_bt_pmic_gpio[] = {
 	PM8XXX_GPIO_INIT(BT_REG_ON, PM_GPIO_DIR_OUT, PM_GPIO_OUT_BUF_CMOS, 0, \
 				PM_GPIO_PULL_NO, PM_GPIO_VIN_S4, \
 				PM_GPIO_STRENGTH_LOW, \
@@ -191,7 +193,7 @@ struct pm8xxx_gpio_init m7_bt_pmic_gpio[] = {
 };
 
 
-static uint32_t m7_GPIO_bt_on_table[] = {
+static uint32_t m7wl_GPIO_bt_on_table[] = {
 
 	
 	GPIO_CFG(BT_UART_RTSz,
@@ -219,7 +221,7 @@ static uint32_t m7_GPIO_bt_on_table[] = {
 				GPIO_CFG_4MA),
 };
 
-static uint32_t m7_GPIO_bt_off_table[] = {
+static uint32_t m7wl_GPIO_bt_off_table[] = {
 
 	
 	GPIO_CFG(BT_UART_RTSz,
@@ -260,22 +262,24 @@ static void config_bt_table(uint32_t *table, int len)
 	}
 }
 
-static void m7_GPIO_config_bt_on(void)
+static void m7wl_GPIO_config_bt_on(void)
 {
 	printk(KERN_INFO "[BT]== R ON ==\n");
 
 	
-	config_bt_table(m7_GPIO_bt_on_table,
-				ARRAY_SIZE(m7_GPIO_bt_on_table));
+	config_bt_table(m7wl_GPIO_bt_on_table,
+				ARRAY_SIZE(m7wl_GPIO_bt_on_table));
 	mdelay(2);
 
-	if (system_rev < XC) {
-		printk(KERN_INFO "[BT]XA XB\n");
+#if (defined (CONFIG_MACH_DUMMY) || defined(CONFIG_MACH_DUMMY))
+	if (system_rev < XB) {
+		printk(KERN_INFO "[BT]XA!\n");
 		
 		htc_BCM4335_wl_reg_ctl(BCM4335_WL_REG_ON, ID_BT);
 		
 		mdelay(5);
 	}
+#endif
 
 	
 	gpio_set_value(PM8921_GPIO_PM_TO_SYS(BT_REG_ON), 0);
@@ -292,21 +296,23 @@ static void m7_GPIO_config_bt_on(void)
 
 }
 
-static void m7_GPIO_config_bt_off(void)
+static void m7wl_GPIO_config_bt_off(void)
 {
-	if (system_rev < XC) {
+#if (defined (CONFIG_MACH_DUMMY) || defined(CONFIG_MACH_DUMMY))
+	if (system_rev < XB) {
 		
 		htc_BCM4335_wl_reg_ctl(BCM4335_WL_REG_OFF, ID_BT);
 		mdelay(5);
 	}
+#endif
 
 	
 	gpio_set_value(PM8921_GPIO_PM_TO_SYS(BT_REG_ON), 0);
 	mdelay(1);
 
 	
-	config_bt_table(m7_GPIO_bt_off_table,
-				ARRAY_SIZE(m7_GPIO_bt_off_table));
+	config_bt_table(m7wl_GPIO_bt_off_table,
+				ARRAY_SIZE(m7wl_GPIO_bt_off_table));
 	mdelay(2);
 
 	
@@ -331,18 +337,18 @@ static void m7_GPIO_config_bt_off(void)
 static int bluetooth_set_power(void *data, bool blocked)
 {
 	if (!blocked)
-		m7_GPIO_config_bt_on();
+		m7wl_GPIO_config_bt_on();
 	else
-		m7_GPIO_config_bt_off();
+		m7wl_GPIO_config_bt_off();
 
 	return 0;
 }
 
-static struct rfkill_ops m7_rfkill_ops = {
+static struct rfkill_ops m7wl_rfkill_ops = {
 	.set_block = bluetooth_set_power,
 };
 
-static int m7_rfkill_probe(struct platform_device *pdev)
+static int m7wl_rfkill_probe(struct platform_device *pdev)
 {
 	int rc = 0;
 	bool default_state = true;  
@@ -352,12 +358,12 @@ static int m7_rfkill_probe(struct platform_device *pdev)
 	
 	mdelay(2);
 
-	for( i = 0; i < ARRAY_SIZE(m7_bt_pmic_gpio); i++) {
-		rc = pm8xxx_gpio_config(m7_bt_pmic_gpio[i].gpio,
-					&m7_bt_pmic_gpio[i].config);
+	for( i = 0; i < ARRAY_SIZE(m7wl_bt_pmic_gpio); i++) {
+		rc = pm8xxx_gpio_config(m7wl_bt_pmic_gpio[i].gpio,
+					&m7wl_bt_pmic_gpio[i].config);
 		if (rc)
 			pr_info("[bt] %s: Config ERROR: GPIO=%u, rc=%d\n",
-				__func__, m7_bt_pmic_gpio[i].gpio, rc);
+				__func__, m7wl_bt_pmic_gpio[i].gpio, rc);
 	}
 
 	bcm_btlock_init();
@@ -365,7 +371,7 @@ static int m7_rfkill_probe(struct platform_device *pdev)
 	bluetooth_set_power(NULL, default_state);
 
 	bt_rfk = rfkill_alloc(bt_name, &pdev->dev, RFKILL_TYPE_BLUETOOTH,
-				&m7_rfkill_ops, NULL);
+				&m7wl_rfkill_ops, NULL);
 	if (!bt_rfk) {
 		rc = -ENOMEM;
 		goto err_rfkill_alloc;
@@ -387,7 +393,7 @@ err_rfkill_alloc:
 	return rc;
 }
 
-static int m7_rfkill_remove(struct platform_device *dev)
+static int m7wl_rfkill_remove(struct platform_device *dev)
 {
 	rfkill_unregister(bt_rfk);
 	rfkill_destroy(bt_rfk);
@@ -397,27 +403,27 @@ static int m7_rfkill_remove(struct platform_device *dev)
 	return 0;
 }
 
-static struct platform_driver m7_rfkill_driver = {
-	.probe = m7_rfkill_probe,
-	.remove = m7_rfkill_remove,
+static struct platform_driver m7wl_rfkill_driver = {
+	.probe = m7wl_rfkill_probe,
+	.remove = m7wl_rfkill_remove,
 	.driver = {
-		.name = "m7_rfkill",
+		.name = "m7wl_rfkill",
 		.owner = THIS_MODULE,
 	},
 };
 
-static int __init m7_rfkill_init(void)
+static int __init m7wl_rfkill_init(void)
 {
-	return platform_driver_register(&m7_rfkill_driver);
+	return platform_driver_register(&m7wl_rfkill_driver);
 }
 
-static void __exit m7_rfkill_exit(void)
+static void __exit m7wl_rfkill_exit(void)
 {
-	platform_driver_unregister(&m7_rfkill_driver);
+	platform_driver_unregister(&m7wl_rfkill_driver);
 }
 
-module_init(m7_rfkill_init);
-module_exit(m7_rfkill_exit);
-MODULE_DESCRIPTION("m7 rfkill");
+module_init(m7wl_rfkill_init);
+module_exit(m7wl_rfkill_exit);
+MODULE_DESCRIPTION("m7wl rfkill");
 MODULE_AUTHOR("htc_ssdbt <htc_ssdbt@htc.com>");
 MODULE_LICENSE("GPL");

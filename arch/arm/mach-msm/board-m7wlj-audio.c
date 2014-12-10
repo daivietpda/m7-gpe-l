@@ -19,19 +19,18 @@
 #include <sound/q6asm.h>
 #include <linux/module.h>
 #include <linux/gpio.h>
-#include "board-m7.h"
+#include "board-m7wl.h"
 #include <mach/tpa6185.h>
 #include <mach/rt5501.h>
 #include "../sound/soc/msm/msm-pcm-routing.h"
 #include "../sound/soc/msm/msm-compr-q6.h"
-#define RCV_PAMP_GPIO 67
 
 static atomic_t q6_effect_mode = ATOMIC_INIT(-1);
 extern unsigned int system_rev;
 extern unsigned int engineerid;
 extern unsigned skuid;
 
-static int m7_get_hw_component(void)
+static int m7wl_get_hw_component(void)
 {
     int hw_com = 0;
 
@@ -39,43 +38,31 @@ static int m7_get_hw_component(void)
     return hw_com;
 }
 
-static int m7_enable_digital_mic(void)
+static int m7wl_enable_digital_mic(void)
 {
-	int ret;
-	if((system_rev == XA)||(system_rev == XB)){
-		ret = 0;
-	}
-	else if ((system_rev == XC)||(system_rev == XD)){
-		if (((skuid & 0xFF) == 0x0B) ||
-			((skuid & 0xFF) == 0x0D) ||
-			((skuid & 0xFF) == 0x0C) ||
-			((skuid & 0xFF) == 0x0E) ||
-			((skuid & 0xFF) == 0x0F) ||
-			((skuid & 0xFF) == 0x10) ||
-			((skuid & 0xFF) == 0x11) ||
-			((skuid & 0xFF) == 0x12) ||
-			((skuid & 0xFF) == 0x13) ||
-			((skuid & 0xFF) == 0x14) ||
-			((skuid & 0xFF) == 0x15)) {
-			ret = 1;
-		}
-		else{
-			ret = 0;
-		}
-	}
-	else{
-		if ((skuid & 0xFFF00) == 0x34C00) {
-			ret = 1;
-		}
-		else if ((skuid & 0xFFF00) == 0x38900) {
-			ret = 2;
-		}
-		else {
-			ret = 3;
-		}
-	}
-	printk(KERN_INFO "m7_enable_digital_mic:skuid=0x%x, system_rev=%x return %d\n", skuid, system_rev, ret);
-	return ret;
+    int ret;
+    
+    if ((system_rev == XA)||(system_rev == XB)||(system_rev == XC)){
+        if ((skuid & 0xFF) == 0x3) {
+            printk(KERN_INFO "(skuid & 0xFF) == 0x3\n");
+            ret = 1;
+        }
+        else if ((skuid & 0xFF) == 0x2) {
+            printk(KERN_INFO "(skuid & 0xFF) == 0x2\n");
+            ret = 1;
+        }
+        ret = 0;
+    }
+    else{
+        if ((skuid & 0xFFF00) == 0x35B00)
+            ret = 1;
+        else if ((skuid & 0xFFF00) == 0x38A00)
+            ret = 2;
+        else
+            ret = 3;
+    }
+    printk(KERN_INFO "m7wlj_enable_digital_mic:skuid=0x%x, system_rev=%x return %d\n", skuid, system_rev,ret);
+    return ret;
 }
 
 void apq8064_set_q6_effect_mode(int mode)
@@ -97,8 +84,8 @@ int apq8064_get_24b_audio(void)
 }
 
 static struct acoustic_ops acoustic = {
-        .enable_digital_mic = m7_enable_digital_mic,
-        .get_hw_component = m7_get_hw_component,
+        .enable_digital_mic = m7wl_enable_digital_mic,
+        .get_hw_component = m7wl_get_hw_component,
 	.set_q6_effect = apq8064_set_q6_effect_mode
 };
 
@@ -114,29 +101,42 @@ static struct msm_compr_q6_ops cops = {
 	.get_24b_audio = apq8064_get_24b_audio,
 };
 
+static void m7wl_audio_pmic_mpp_config(void)
+{
+	unsigned ret;
 
-static int __init m7_audio_init(void)
+	struct pm8xxx_mpp_config_data m7wl_audio_pmic_mpp = {
+		.type	= PM8XXX_MPP_TYPE_D_OUTPUT,
+		.level	= PM8921_MPP_DIG_LEVEL_S4,
+		.control = PM8XXX_MPP_DOUT_CTRL_LOW,
+	};
+
+	ret = pm8xxx_mpp_config(PM8921_MPP_PM_TO_SYS(9),
+		&m7wl_audio_pmic_mpp);
+	if (ret < 0)
+		pr_err("%s:MPP_9 configuration failed\n", __func__);
+}
+
+static int __init m7wl_audio_init(void)
 {
         int ret = 0;
 
-	
-	gpio_request(RCV_PAMP_GPIO, "AUDIO_RCV_AMP");
-	gpio_tlmm_config(GPIO_CFG(67, 0, GPIO_CFG_OUTPUT, GPIO_CFG_PULL_DOWN, GPIO_CFG_2MA), GPIO_CFG_DISABLE);
 	htc_register_q6asm_ops(&qops);
 	htc_register_pcm_routing_ops(&rops);
 	htc_register_compr_q6_ops(&cops);
 	acoustic_register_ops(&acoustic);
+	m7wl_audio_pmic_mpp_config();
 	pr_info("%s", __func__);
 	return ret;
 
 }
-late_initcall(m7_audio_init);
+late_initcall(m7wl_audio_init);
 
-static void __exit m7_audio_exit(void)
+static void __exit m7wl_audio_exit(void)
 {
 	pr_info("%s", __func__);
 }
-module_exit(m7_audio_exit);
+module_exit(m7wl_audio_exit);
 
 MODULE_DESCRIPTION("ALSA Platform Elite");
 MODULE_LICENSE("GPL v2");

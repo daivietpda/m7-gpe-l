@@ -1,4 +1,4 @@
-/* arch/arm/mach-msm/board-m7-keypad.c
+/* arch/arm/mach-msm/board-m7wl-keypad.c
  * Copyright (C) 2010 HTC Corporation.
  *
  * This software is licensed under the terms of the GNU General Public
@@ -22,15 +22,15 @@
 #include <mach/gpio.h>
 #include <linux/moduleparam.h>
 #include <linux/mfd/pm8xxx/pm8921.h>
-#include "board-m7.h"
+#include "board-m7wlj.h"
 
 static char *keycaps = "--qwerty";
 #undef MODULE_PARAM_PREFIX
-#define MODULE_PARAM_PREFIX "board_m7."
+#define MODULE_PARAM_PREFIX "board_m7wl."
 
 module_param_named(keycaps, keycaps, charp, 0);
 
-static struct gpio_event_direct_entry m7_keypad_map[] = {
+static struct gpio_event_direct_entry m7wl_keypad_map[] = {
 	{
 		.gpio = PWR_KEY_MSMz,
 		.code = KEY_POWER,
@@ -54,7 +54,7 @@ static uint32_t matirx_inputs_gpio_table[] = {
 		 GPIO_CFG_2MA),
 };
 
-static void m7_direct_inputs_gpio(void)
+static void m7wl_direct_inputs_gpio(void)
 {
 	int i = 0;
 
@@ -71,7 +71,7 @@ uint32_t hw_clr_gpio_table[] = {
 		GPIO_CFG_PULL_UP, GPIO_CFG_2MA),
 };
 
-static void m7_clear_hw_reset(void)
+static void m7wl_clear_hw_reset(void)
 {
 	printk(KERN_INFO "[KEY] %s ++++++\n", __func__);
 	gpio_tlmm_config(hw_clr_gpio_table[1], GPIO_CFG_ENABLE);
@@ -81,7 +81,7 @@ static void m7_clear_hw_reset(void)
 	printk(KERN_INFO "[KEY] %s ------\n", __func__);
 }
 
-static struct gpio_event_input_info m7_keypad_power_info = {
+static struct gpio_event_input_info m7wl_keypad_power_info = {
 	.info.func = gpio_event_input_func,
 	.flags = GPIOEDF_PRINT_KEYS,
 	.type = EV_KEY,
@@ -90,31 +90,31 @@ static struct gpio_event_input_info m7_keypad_power_info = {
 # else
 	.debounce_time.tv64 = 20 * NSEC_PER_MSEC,
 # endif
-	.keymap = m7_keypad_map,
-	.keymap_size = ARRAY_SIZE(m7_keypad_map),
-	.setup_input_gpio = m7_direct_inputs_gpio,
-	.clear_hw_reset = m7_clear_hw_reset,
+	.keymap = m7wl_keypad_map,
+	.keymap_size = ARRAY_SIZE(m7wl_keypad_map),
+	.setup_input_gpio = m7wl_direct_inputs_gpio,
+	.clear_hw_reset = m7wl_clear_hw_reset,
 };
 
-static struct gpio_event_info *m7_keypad_info[] = {
-	&m7_keypad_power_info.info,
+static struct gpio_event_info *m7wl_keypad_info[] = {
+	&m7wl_keypad_power_info.info,
 };
 
-static struct gpio_event_platform_data m7_keypad_data = {
+static struct gpio_event_platform_data m7wl_keypad_data = {
 	.name = "keypad_8960",
-	.info = m7_keypad_info,
-	.info_count = ARRAY_SIZE(m7_keypad_info),
+	.info = m7wl_keypad_info,
+	.info_count = ARRAY_SIZE(m7wl_keypad_info),
 };
 
-static struct platform_device m7_keypad_device = {
+static struct platform_device m7wl_keypad_device = {
 	.name = GPIO_EVENT_DEV_NAME,
 	.id = 0,
 	.dev		= {
-		.platform_data	= &m7_keypad_data,
+		.platform_data	= &m7wl_keypad_data,
 	},
 };
 
-static struct keyreset_platform_data m7_reset_keys_pdata = {
+static struct keyreset_platform_data m7wl_reset_keys_pdata = {
 	
 	.keys_down = {
 		KEY_POWER,
@@ -124,16 +124,16 @@ static struct keyreset_platform_data m7_reset_keys_pdata = {
 	},
 };
 
-static struct platform_device m7_reset_keys_device = {
+static struct platform_device m7wl_reset_keys_device = {
 	.name = KEYRESET_NAME,
-	.dev.platform_data = &m7_reset_keys_pdata,
+	.dev.platform_data = &m7wl_reset_keys_pdata,
 };
 
-int __init m7_init_keypad(void)
+int __init m7wl_init_keypad(void)
 {
-	if (platform_device_register(&m7_reset_keys_device))
+	if (platform_device_register(&m7wl_reset_keys_device))
 		printk(KERN_WARNING "%s: register reset key fail\n", __func__);
 
-	return platform_device_register(&m7_keypad_device);
+	return platform_device_register(&m7wl_keypad_device);
 }
 
