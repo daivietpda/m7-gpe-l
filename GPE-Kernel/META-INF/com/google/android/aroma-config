@@ -59,7 +59,7 @@ viewbox(
     "@welcome"
 );
 
-agreebox("Terms Of Use","Please read the Terms of Use...","icons/agreement",
+agreebox("Terms Of Use","Please read the ElementalX Terms of Use...","icons/agreement",
    "" + readfile_aroma("agreement.txt"),
    "I Agree with these Terms Of Use...",
    "Please check the box..."
@@ -72,21 +72,213 @@ alert(
   "OK"
 );
 
+selectbox(
+  "CPU Settings","","","cpu.prop",
+
+  "Set each CPU core frequency separately","",2,
+  "No","(recommended)",1,
+  "Yes","Gives the option to set the max freq for each core individually",0,
+
+  "Select mpdecision settings","",2,
+  "battery savings","less aggressive (EXPERIMENTAL)",0,
+  "default","HTC stock",1,
+  "performance","more aggressive (EXPERIMENTAL)",0,
+
+  "Select thermal throttling","",2,
+  "extra cool","even more thermal throttling",0,
+  "run cool","more thermal throttling",0,
+  "default","default thermal throttling",1,
+  "run hot","less thermal throttling",0
+);
+
+
+if file_getprop("/tmp/aroma/cpu.prop","selected.1") == "1"
+then
+
+selectbox(
+  "Maximum CPU Frequency","Select maximum CPU frequency\n","@personalize","freq0.prop",
+  "1134MHz","",0,
+  "1350MHz","",0,
+  "1566MHz","",0,
+  "1728MHz","(stock)",1,
+  "1836MHz","",0,
+  "1890MHz","",0,
+  "1944MHz","",0,
+  "1998MHz","",0,
+  "2052MHz","",0,
+  "2106MHz","",0,
+  "2133MHz","",0,
+  "2160MHz","",0,
+  "2214MHz","",0,
+  "2295MHz","",0
+);
+
+
+endif;
+
+if file_getprop("/tmp/aroma/cpu.prop","selected.1") == "2"
+then
+
+selectbox(
+  "Maximum CPU Frequency","Select maximum frequency for first CPU core\n","@personalize","freq0.prop",
+  "1134MHz","",0,
+  "1350MHz","",0,
+  "1566MHz","",0,
+  "1728MHz","(stock)",1,
+  "1836MHz","",0,
+  "1890MHz","",0,
+  "1944MHz","",0,
+  "1998MHz","",0,
+  "2052MHz","",0,
+  "2106MHz","",0,
+  "2133MHz","",0,
+  "2160MHz","",0,
+  "2214MHz","",0,
+  "2295MHz","",0
+);
+
+selectbox(
+  "Maximum CPU Frequency","Select maximum frequency for second CPU core\n","@personalize","freq1.prop",
+  "1134MHz","",0,
+  "1350MHz","",0,
+  "1566MHz","",0,
+  "1728MHz","(stock)",1,
+  "1836MHz","",0,
+  "1890MHz","",0,
+  "1944MHz","",0,
+  "1998MHz","",0,
+  "2052MHz","",0,
+  "2106MHz","",0,
+  "2133MHz","",0,
+  "2160MHz","",0,
+  "2214MHz","",0,
+  "2295MHz","",0
+);
+
+selectbox(
+  "Maximum CPU Frequency","Select maximum frequency for third CPU core\n","@personalize","freq2.prop",
+  "1134MHz","",0,
+  "1350MHz","",0,
+  "1566MHz","",0,
+  "1728MHz","(stock)",1,
+  "1836MHz","",0,
+  "1890MHz","",0,
+  "1944MHz","",0,
+  "1998MHz","",0,
+  "2052MHz","",0,
+  "2106MHz","",0,
+  "2133MHz","",0,
+  "2160MHz","",0,
+  "2214MHz","",0,
+  "2295MHz","",0
+);
+
+selectbox(
+  "Maximum CPU Frequency","Select maximum frequency for fourth CPU core\n","@personalize","freq3.prop",
+  "1134MHz","",0,
+  "1350MHz","",0,
+  "1566MHz","",0,
+  "1728MHz","(stock)",1,
+  "1836MHz","",0,
+  "1890MHz","",0,
+  "1944MHz","",0,
+  "1998MHz","",0,
+  "2052MHz","",0,
+  "2106MHz","",0,
+  "2133MHz","",0,
+  "2160MHz","",0,
+  "2214MHz","",0,
+  "2295MHz","",0
+);
+
+endif;
+
+selectbox(
+  "<b>Auto Undervolting","Lowers the voltage for the lowest cpu frequency. Undervolting may cause instability, reinstall with stock voltage if boot fails.</b>\n","@alert","uv.prop",
+  "Stock","",0,
+  "Undervolt (850 min)","",1,
+  "Undervolt (825 min)","",0,
+  "Undervolt (800 min)","",0,
+  "Undervolt (775 min)","",0,
+  "Undervolt (750 min)","",0,
+  "Undervolt (725 min)","",0
+);
+
+selectbox(
+  "GPU Settings","","","gpu.prop",
+
+  "Select maximum GPU frequency","",2,
+  "400Mhz","(stock)",0,
+  "410Mhz","(stockish, but allows on the fly changing)",0,
+  "450MHz","(overclocked)",1,
+  "477MHz","(overclocked)",0,
+  "491MHz","(overclocked)",0,
+  "504MHz","(overclocked)",0,
+  "531MHz","(overclocked)",0,
+  "558MHz","(not recommended)",0,
+  "585MHz","(not recommended)",0,
+
+  "Select GPU governor","",2,
+  "Ondemand","(recommended)",1,
+  "Simple","",0
+);
+
+selectbox(
+  "Disk Settings","Select i/o scheduler","","disk.prop",
+  "CFQ","(stock)",0,
+  "ROW","(default)",1,
+  "deadline","",0,
+  "FIOPS","",0,
+  "SIO","",0,
+  "BFQ","",0,
+  "noop","",0
+);
+
+
+checkbox(
+  "Other settings","<b>Select the mods you want to install</b>","@personalize","mods.prop",
+  "Enable Logo2menu","Use HTC logo as menu button (Leave enabled if using ViperOne)",1,
+  "Enable Button Light Notification","",1,
+  "Enable USB fastcharge","",0,
+  "Disable HTC color enhancement","truer color",0,
+  "Enable graphics boost","Better gaming performance",1,
+  "Disable HTC pnpmgr","HTC pnpmgr ensures smooth ui, recommend leaving it enabled",0,
+  "Enable Color/Gamma support","",0
+);
+  
+
+
+
 checkbox(
   "S2W/DT2W options","Select the mods you want to install","@personalize","sw.prop",
+  "Sweep right","Sweep right across buttons to wake phone",1,
   "Sweep left","Sweep left across buttons to wake phone",1,
+  "Sweep up","Sweep up to wake phone",1,
+  "Sweep down","Sweep down to wake phone",1,
+  "DoubleTap2Wake","Double tap bottom of screen to wake phone",0,
   "DoubleTap2Wake (fullscreen)","Double tap anywhere on screen to wake phone",1,
   "Logo2Wake","Wake phone with long press of HTC logo",0,
   "Pocket detection","prevents accidental wakes",1
 );
 
-
+if file_getprop("/tmp/aroma/sw.prop","item.0.5") == "1" && file_getprop("/tmp/aroma/sw.prop","item.0.6") == "1"
+then 
+alert(
+  "PLEASE NOTE:",
+  "You must choose either doubletap2wake or doubletap2wake fullscreen.  You can't choose both",
+  "@alert",
+  "OK"
+);
+back("1");
+endif;
 
 if file_getprop("/tmp/aroma/sw.prop","item.0.1") == "1" ||
   file_getprop("/tmp/aroma/sw.prop","item.0.2") == "1" ||
   file_getprop("/tmp/aroma/sw.prop","item.0.3") == "1" ||
   file_getprop("/tmp/aroma/sw.prop","item.0.4") == "1" ||
-  file_getprop("/tmp/aroma/sw.prop","item.0.5") == "1"
+  file_getprop("/tmp/aroma/sw.prop","item.0.5") == "1" ||
+  file_getprop("/tmp/aroma/sw.prop","item.0.6") == "1" ||
+  file_getprop("/tmp/aroma/sw.prop","item.0.7") == "1"
 then
 selectbox(
   "Gesture vibration settings","Set the amount of vibration for sweep2wake/logo2wake/doubletap2wake\n","@personalize","vibrate.prop",
@@ -110,17 +302,12 @@ selectbox(
   "Disable Logo2Sleep","(also disables Logo2Wake)",0
 );
 
-checkbox(
- "Other settings","<b>Select the mods you want to install</b>","@personalize","mods.prop",
-  "Enable Logo2menu","Use HTC logo as menu button (Leave enabled if using ViperOne)",1
- );
-
 menubox(
-  "Kernel Installer",
+  "ElementalX Installer",
   "Ready to install",
   "@info",
   "menu.prop",
-  "Install Kernel","","@install",
+  "Install ElementalX","","@install",
   "Abort installation","","@default"
 );
 
@@ -132,7 +319,7 @@ endif;
 setvar("retstatus",
 install(
   "Installing",
-  "Installing GPE Kernel...\nPlease wait...",
+  "Installing ElementalX Kernel...\nPlease wait...",
   "@install")
 );
 
