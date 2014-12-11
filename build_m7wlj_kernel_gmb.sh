@@ -3,7 +3,7 @@
 # Path to build your kernel
   k=~/android/kernel/m7-GPE-L
 # Directory for the any kernel updater
-  t=$k/packages
+  t=$k/GPE-Kernel
 # Date to add to zip
   today=$(date +"%m_%d_%Y")
 
