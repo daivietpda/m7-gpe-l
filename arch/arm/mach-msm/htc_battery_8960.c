@@ -63,7 +63,7 @@ static int chg_dis_control_mask = HTC_BATT_CHG_DIS_BIT_ID
 								| HTC_BATT_CHG_DIS_BIT_USR_TMR;
 static int chg_dis_pj_mask = HTC_BATT_CHG_DIS_BIT_ID
 								| HTC_BATT_CHG_DIS_BIT_TMR;
-
+ 
 #ifdef CONFIG_FORCE_FAST_CHARGE
 #include <linux/fastchg.h>
 #endif
