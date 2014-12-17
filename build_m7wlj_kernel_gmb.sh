@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Path to build your kernel
-  k=~/android/kernel/m7-GPE-L
+  k=~/android/kernel/m7-gpe-l
 # Directory for the any kernel updater
   t=$k/GPE-Kernel
 # Date to add to zip
@@ -30,7 +30,7 @@
   m=$k/out/$c/system/lib/modules
   z=$c-$today
 
-TOOLCHAIN=/home/daivietpda/android/arm-linaro-4.9/bin/arm-cortex_a15-linux-gnueabihf-
+TOOLCHAIN=/home/daivietpda/android/arm-linaro-4.9.3/bin/arm-cortex_a15-linux-gnueabihf-
 export ARCH=arm
 export SUBARCH=arm
 

@@ -458,3 +458,4 @@ config SOUND_CONTROL_HAX_GPL
 	default y
 	help
 	  FauxSound WCD93xx chipset sound control hacks
+
