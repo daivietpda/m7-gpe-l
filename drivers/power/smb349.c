@@ -3627,4 +3627,3 @@ module_exit(smb349_exit);
 MODULE_DESCRIPTION("Driver for SMB349 charger chip");
 MODULE_LICENSE("GPL v2");
 MODULE_ALIAS("i2c:" SMB349_NAME);
-
