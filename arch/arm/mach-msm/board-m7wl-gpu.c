@@ -22,8 +22,6 @@
 #include "devices.h"
 #include "board-m7wl.h"
 
-uint32_t max_gpu = 1;
-
 #ifdef CONFIG_MSM_DCVS
 static struct msm_dcvs_freq_entry grp3d_freq[] = {
        {0, 0, 333932},
@@ -318,19 +316,6 @@ struct platform_device device_kgsl_3d0 = {
 	},
 };
 
-/*gpuoc*/
-static int __init read_max_gpu(char *gpu_oc)
-{
-	if (strcmp(gpu_oc, "1") == 0) {
-		max_gpu = 1;
-	} else {
-		max_gpu = 0;
-	}	
-	return 0;
-}
-
-__setup("ocG=", read_max_gpu);
-/*end gpuoc*/
 
 void __init m7wl_init_gpu(void)
 {

@@ -3,7 +3,7 @@
 # Path to build your kernel
   k=~/android/kernel/m7-GPE-L
 # Directory for the any kernel updater
-  t=$k/packages
+  t=$k/packages_stkclk
 # Date to add to zip
   today=$(date +"%m_%d_%Y")
 
@@ -20,9 +20,6 @@
 # Setup output directory
        mkdir -p "out/$c"
           cp -R "$t/system" out/$c
-          cp -R "$t/config" out/$c
-          cp -R "$t/l2m" out/$c
-          cp -R "$t/no_l2m" out/$c
           cp -R "$t/META-INF" out/$c
           cp -R "$t/kernel" out/$c
        mkdir -p "out/$c/system/lib/modules/"
@@ -42,7 +39,7 @@ find ./ -name '*~' | xargs rm
 # rm compile.log
 
 # make kernel
-make 'm7wlj_defconfig'
+make 'm7wlj_stock_defconfig'
 make -j`grep 'processor' /proc/cpuinfo | wc -l` CROSS_COMPILE=$TOOLCHAIN #>> compile.log 2>&1 || exit -1
 
 # Grab modules & zImage
