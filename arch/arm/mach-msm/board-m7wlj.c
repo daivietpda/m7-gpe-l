@@ -250,6 +250,9 @@ enum {
 #ifdef CONFIG_CPU_FREQ_GOV_ONDEMAND_2_PHASE
 int set_two_phase_freq(int cpufreq);
 #endif
+#ifdef CONFIG_CPU_FREQ_GOV_INTELLIDEMAND 
+int id_set_two_phase_freq(int cpufreq);
+#endif
 
 int set_input_event_min_freq_by_cpu(int cpu_nr, int cpufreq);
 
@@ -599,6 +602,7 @@ static struct ion_cp_heap_pdata cp_mm_m7wl_ion_pdata = {
 	.reusable = FMEM_ENABLED,
 	.mem_is_fmem = FMEM_ENABLED,
 	.fixed_position = FIXED_MIDDLE,
+        .no_nonsecure_alloc = 0,
 };
 
 static struct ion_cp_heap_pdata cp_mfc_m7wl_ion_pdata = {
@@ -607,6 +611,7 @@ static struct ion_cp_heap_pdata cp_mfc_m7wl_ion_pdata = {
 	.reusable = 0,
 	.mem_is_fmem = FMEM_ENABLED,
 	.fixed_position = FIXED_HIGH,
+        .no_nonsecure_alloc = 0,
 };
 
 static struct ion_co_heap_pdata co_m7wl_ion_pdata = {
@@ -656,6 +661,7 @@ static struct ion_platform_data ion_pdata = {
 			.memory_type = ION_EBI_TYPE,
 			.extra_data = (void *) &cp_mfc_m7wl_ion_pdata,
 		},
+#ifndef CONFIG_MSM_IOMMU
 		{
 			.id	= ION_SF_HEAP_ID,
 			.type	= ION_HEAP_TYPE_CARVEOUT,
@@ -664,6 +670,7 @@ static struct ion_platform_data ion_pdata = {
 			.memory_type = ION_EBI_TYPE,
 			.extra_data = (void *) &co_m7wl_ion_pdata,
 		},
+#endif
 		{
 			.id	= ION_IOMMU_HEAP_ID,
 			.type	= ION_HEAP_TYPE_IOMMU,

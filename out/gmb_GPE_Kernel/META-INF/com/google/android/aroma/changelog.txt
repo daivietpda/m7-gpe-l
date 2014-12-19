@@ -1,0 +1,332 @@
+ElementalX-14.4
+-add wake gestures
+
+
+ElementalX-14.2
+-add sweepup2wake
+-make wake vibration more immediate
+
+
+ElementalX-14.1
+-fix exfat support
+
+
+ElementalX-14.0
+-latest kernel source from HTC
+
+
+ElementalX-13.5
+-Color/Gamma Control optional
+-new installer
+
+
+ElementalX-13.4
+-fix l2w_wakelock mistake
+
+
+ElementalX-13.3
+-fix doubletap2wake
+-TricksterMod rgb compatibility
+
+
+ElementalX-13.2
+-update for Sense 4.4.2
+-fix logo2wake
+-add tunables to governor
+-add input boosting
+-add f2fs support
+-reduce logspam
+-reduce wifi wakelocks
+
+
+ElementalX-13.0
+-update for Sense 5.5 Android 4.4.2
+-Makefile adjustments
+-update to latest HTC source code
+-ROW is default i/o scheduler
+-various tweaks and optimizations
+
+
+ElementalX-12.0
+-update Aroma
+-add gamma control (credit: faux123)
+-new installation method
+
+
+ElementalX-11.4
+-fixes for wlan_rx_wake wakelocks
+-remove maxscroff
+-doubletap2wake fullscreen/halfscreen option
+-make doubletap2wake more sensitive
+-add ROW i/o scheduler
+-Makefile adjustments
+-slimbus overclock (credit: poondog)
+
+
+ElementalX-11.3
+-adjust gboost
+-update installer
+
+
+ElementalX-11.2
+-rename elementalx governor back to ondemand
+
+
+ElementalX-11.1
+-elementalx cpu governor
+-color control (credit: faux123)
+-remove fsync option
+
+
+ElementalX-11.0
+-update Google Play Edition Android 4.4.2
+-Makefile adjustment
+
+
+ElementalX-9.1
+-gboost enables hybrid ondemand
+-battery saving tweaks
+-fix max cpu setting
+-restrict doubletap2wake to bottom half of screen
+-add sysfs entry for max screen off
+-default max screen off is 1134MHz
+-adjust Makefile options
+-remove tracing
+-shorten command line
+-update installer
+-make doubletap2wake more sensitive
+
+
+ElementalX-9.0.1
+-remove "remove 3-dot menubar" option
+
+
+ElementalX-9.0
+-update with HTC Google Play Edition Source
+-remove "restore 3-dot menubar" option
+
+
+ElementalX-8.1
+-fix pocket detection
+-fiops is default i/o scheduler
+
+
+ElementalX-8.0.1
+-add modules to installer
+
+
+ElementalX-8.0
+-update with HTC source code 
+-adjust touch wake functions
+-restore stock camera app and libs
+
+
+ElementalX-6.1.2
+-allow changing GPU freq if pnpmgr is disabled
+
+
+ElementalX-6.1.1
+-aroma options for graphics boost and pnpmgr
+
+
+ElementalX-6.1
+-add graphics boost
+-update camera files
+
+
+ElementalX-6.0
+-fix camera (thanks tbalden)
+-update ramdisk for Sense 5.5
+-re-enable pnpmgr
+
+
+ElementalX-5.6
+-enable config options for multirom support
+
+
+ElementalX-5.5
+-update installer
+-update config files
+-show pvs number in sysfs
+-add 409.5MHz GPU step
+-reduce debug messages
+-kexec-hardboot (for multirom support)
+-fix MDP bus scaling data (cyanogenmod)
+-boost CPU frequency only for touch input
+
+
+ElementalX-3.12.1
+-fix GPU frequencies
+-fix installer
+
+
+ElementalX-3.12
+-add option to enable/disable fsync
+-add more GPU frequencies
+-Optimize square root algorithm
+-Send events one packet at a time
+-updates to freezer and cpuidle
+-update installer
+
+
+ElementalX-3.11
+-add exfat support
+-change default button_timeout
+
+
+ElementalX-3.10
+-update with 4.2.2 Sense source
+-update modules
+
+
+ElementalX-3.9
+-remove bus overclocking
+-adjust Makefiles
+
+
+ElementalX-3.8
+-makefile adjustments
+-fix ondemand gpu governor
+-adjust loadavg
+-update modules
+-add higher voltage for 2214MHz and 2295MHz 
+-add l2/bus overclocking
+
+
+ElementalX-3.7
+-revert simple governor to default behaviour
+-hack to make simple governor stick after benchmarks
+
+
+ElementalX-3.6
+-fix GPU frequency
+
+
+ElementalX-3.5
+-fix logo2wake
+-adjust build options
+-487MHz and 533MHz GPU freq
+-CPU overclock up to 2295MHz
+
+
+ElementalX-3.4
+-default max screen off frequency 702MHz
+-screen off frequency applied to all cores
+-sweep2wake adjustments
+-update modules
+-adjust simple governor
+-home button timeout option in installer
+
+
+ElementalX-3.3
+-sweep2wake fixes
+-doubletap2wake fixes
+-ondemand gpu governor fixed
+-Makefile optimizations
+-install-recovery.sh command added to ramdisk
+-simple GPU governor installer option
+
+
+ElementalX-3.2
+-fix sweep2wake bugs
+
+
+ElementalX-3.1
+-use custom Linaro toolchain 4.8
+-O3 compile
+-add simple GPU governor (faux123)
+-installer fixes
+
+
+ElementalX-3.0
+-use Google Android toolchain 4.6
+-update installer options
+-add optional max screen off frequency
+-fix sweep2wake bugs
+-add mpdecision options
+-option to disable HTC color enhancement
+-fix for home button options (if not using logo2menu)
+-add ability to restore 3-dot menu
+
+
+ElementalX-2.7
+-use linaro 4.8 toolchain
+-fix capacitive buttons sometimes still active while screen off
+
+
+ElementalX-2.5
+-fix multiple qemu.hw.mainkeys entries in build.prop
+-add fastcharge option
+-re-enable pnpmgr
+
+
+ElementalX-2.4
+-fix touchscreen registering input during calls
+-add sysfs config for sleep/wake vibration strength
+-new logo (thanks jonas2295)
+-slight boost to L2 freq
+-slight boost to GPU bus bandwidth
+
+
+ElementalX-2.3
+-vibration feedback for s2w
+-add TCP congestion algorithm options
+-fix fastcharge (thanks tbalden)
+-revert some tweaks
+
+
+ElementalX-2.2
+-update BLN
+-fix for app-mounted directories (thanks @mkasick)
+
+
+ElementalX-2.1
+-add more undervolting options
+-update aroma installer
+-adjust ramdisk
+-disable pnpmgr
+-hsic wakelock tweak
+-fix crypto modules
+
+
+ElementalX-2.0
+-update to latest 4.2.2 HTC sources
+-pocket detection suppress accidental wakes with s2w and dt2w
+-ROW scheduler
+-button light notification (tbalden)
+-add thermal options
+-doubletap2wake
+-kernel based thermal control (crpalmer)
+-Improve scalability via 'CPU buddies'
+-avoid loadavg moire
+-CPU overclock to 2160MHz
+-automatic undervolting to 850, 800 or 750
+-compatible with faux sound control
+-optimized AES and SHA1 routines
+-lower possible voltage to 700
+-undervolting option
+-logo2menu (tbalden)
+-sleep/wake with longpress HTC button
+-optional graphics overclock
+-add /dev/frandom
+-sweep2wake
+-disable /system write protection
+-linaro 4.7.3 -o3 optimization
+-ntfs r/w
+-fast rcu nohz
+-intellidemand governor
+-arm cpu topology
+-update cpu_power according to cpu load
+-mhl change to 1280x720@60Hz
+-add CIFS support
+-add FIOPS and SIO i/o schedulers
+-force fastcharge
+-voltage control
+
+
+
+
+
+
+
+

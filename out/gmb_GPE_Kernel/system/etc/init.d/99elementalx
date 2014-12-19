@@ -1,0 +1,271 @@
+#!/system/bin/sh
+
+ELEX_CONF="/system/etc/elementalx.conf"
+ELEX_LOGFILE="/data/local/tmp/elementalx.log"
+
+if [ -f $ELEX_LOGFILE ]; then
+  mv $ELEX_LOGFILE $ELEX_LOGFILE.2;
+fi
+
+echo $(date) >> $ELEX_LOGFILE
+
+#Set CPU_FREQ
+echo 384000 > /sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq; 
+echo 384000 > /sys/devices/system/cpu/cpu1/cpufreq/scaling_min_freq;
+echo 384000 > /sys/devices/system/cpu/cpu2/cpufreq/scaling_min_freq;
+echo 384000 > /sys/devices/system/cpu/cpu3/cpufreq/scaling_min_freq;
+
+#Find PVS bin
+PVS="`cat /sys/module/acpuclock_krait/parameters/pvs_number`"
+echo PVS: $PVS >> $ELEX_LOGFILE;
+
+#Set POWERSAVE_BIAS - if using intellidemand governor
+POWERSAVE_BIAS="`cat $ELEX_CONF | grep POWERSAVE_BIAS | cut -d '=' -f2`"
+echo $POWERSAVE_BIAS > /sys/devices/system/cpu/cpufreq/intellidemand/powersave_bias
+echo Powersave bias is $POWERSAVE_BIAS >> $ELEX_LOGFILE
+
+#Load color/gamma module
+if [ "`grep COLOR=1 $ELEX_CONF`" ]; then
+  insmod /system/lib/modules/msm_kcal_ctrl.ko
+  echo Color Control enabled >> $ELEX_LOGFILE;
+fi
+
+#Set BLN
+if [ "`grep BLN=1 $ELEX_CONF`" ]; then
+  echo 1 > /sys/class/leds/button-backlight/blink_buttons
+  echo Button Light Notification enabled >> $ELEX_LOGFILE;
+else
+  echo 0 > /sys/class/leds/button-backlight/blink_buttons
+  echo Button Light Notification disabled >> $ELEX_LOGFILE;
+fi
+
+#Set FASTCHARGE
+if [ "`grep FC=1 $ELEX_CONF`" ]; then
+  echo 1 > /sys/kernel/fast_charge/force_fast_charge
+  echo USB Fastcharge enabled >> $ELEX_LOGFILE;
+else
+  echo 0 > /sys/kernel/fast_charge/force_fast_charge
+  echo USB Fastcharge disabled >> $ELEX_LOGFILE;
+fi
+
+#Set Sweep2wake
+S2W="`grep S2W $ELEX_CONF | cut -d '=' -f2`"
+  echo $S2W > /sys/android_touch/sweep2wake
+  echo Sweep2wake $S2W >> $ELEX_LOGFILE;
+
+#Set DOUBLETAP2WAKE
+if [ "`grep DT2W=1 $ELEX_CONF`" ]; then
+  echo 1 > /sys/android_touch/doubletap2wake;
+  echo DoubleTap2Wake enabled >> $ELEX_LOGFILE;
+elif [ "`grep DT2W=2 $ELEX_CONF`" ]; then
+  echo 2 > /sys/android_touch/doubletap2wake;
+  echo DoubleTap2Wake fullscreen enabled >> $ELEX_LOGFILE;
+else
+  echo 0 > /sys/android_touch/doubletap2wake;
+  echo DoubleTap2Wake disabled >> $ELEX_LOGFILE;
+fi
+
+#Set GESTURES
+if [ "`grep WG=1 $ELEX_CONF`" ]; then
+  echo 1 > /sys/android_touch/wake_gestures;
+  echo Wake gestures enabled >> $ELEX_LOGFILE;
+else
+  echo 0 > /sys/android_touch/wake_gestures;
+  echo Wake gestures disabled >> $ELEX_LOGFILE;
+fi
+
+#Set LOGO2WAKE
+if [ "`grep LOGO2WAKE=1 $ELEX_CONF`" ]; then
+  echo 1 > /sys/android_touch/logo2wake;
+  echo Logo2Wake enabled >> $ELEX_LOGFILE;
+else
+  echo 0 > /sys/android_touch/logo2wake;
+  echo Logo2Wake disabled >> $ELEX_LOGFILE;
+fi
+
+#Set VIBRATION
+if [ "`grep VIB=0 $ELEX_CONF`" ]; then
+  echo 0 > /sys/android_touch/vib_strength;
+  echo "sleep/wake vibration disabled" >> $ELEX_LOGFILE;
+elif [ "`grep VIB=2 $ELEX_CONF`" ]; then
+  echo 30 > /sys/android_touch/vib_strength;
+  echo "stronger sleep/wake vibration" >> $ELEX_LOGFILE;
+fi
+
+#Set pocket detection
+if [ "`grep POCKET=0 $ELEX_CONF`" ]; then
+  echo 0 > /sys/android_touch/pocket_detect;
+  echo Pocket detection disabled >> $ELEX_LOGFILE;
+else
+  echo 1 > /sys/android_touch/pocket_detect;
+  echo Pocket detection enabled >> $ELEX_LOGFILE;
+fi
+
+#Set Sweep2sleep
+if [ "`grep S2S=1 $ELEX_CONF`" ]; then
+  echo 1 > /sys/android_touch/sweep2sleep
+  echo Sweep2sleep right enabled >> $ELEX_LOGFILE;
+elif [ "`grep S2S=2 $ELEX_CONF`" ]; then
+  echo 2 > /sys/android_touch/sweep2sleep
+  echo Sweep2sleep left enabled >> $ELEX_LOGFILE;
+elif [ "`grep S2S=3 $ELEX_CONF`" ]; then
+  echo 3 > /sys/android_touch/sweep2sleep
+  echo Sweep2sleep left and right enabled >> $ELEX_LOGFILE;
+else
+  echo 0 > /sys/android_touch/sweep2sleep
+  echo Sweep2sleep disabled >> $ELEX_LOGFILE;
+fi
+
+#Set LOGO2MENU
+if [ "`grep LOGO2MENU=1 $ELEX_CONF`" ]; then
+  echo 1 > /sys/android_touch/logo2menu;
+  echo logo2menu enabled >> $ELEX_LOGFILE;
+else
+  echo 0 > /sys/android_touch/logo2menu;
+  echo logo2menu disabled >> $ELEX_LOGFILE;
+fi
+
+#thermal settings
+if [ "`grep THERM=1 $ELEX_CONF`" ]; then
+  echo 58,64,75,85 > /sys/module/msm_thermal/parameters/limit_temp_degC;
+  echo run cool >> $ELEX_LOGFILE;
+elif [ "`grep THERM=2 $ELEX_CONF`" ]; then
+  echo 54,60,75,85 > /sys/module/msm_thermal/parameters/limit_temp_degC;
+  echo run extra cool >> $ELEX_LOGFILE;
+elif [ "`grep THERM=3 $ELEX_CONF`" ]; then
+  echo 66,71,75,85 > /sys/module/msm_thermal/parameters/limit_temp_degC;
+  echo run hot >> $ELEX_LOGFILE;
+fi
+
+#Set HTC color enhance
+if [ "`grep COLOR_ENHANCE=0 $ELEX_CONF`" ]; then
+  echo 0 > /sys/devices/platform/msm_fb.590593/leds/lcd-backlight/color_enhance;
+  echo HTC color enhance disabled >> $ELEX_LOGFILE;
+elif [ "`grep COLOR_ENHANCE=1 $ELEX_CONF`" ]; then
+  echo 1 > /sys/devices/platform/msm_fb.590593/leds/lcd-backlight/color_enhance;
+  echo HTC color enhance enabled >> $ELEX_LOGFILE;
+fi
+
+#io scheduler settings
+SCHED=`grep "SCHED" $ELEX_CONF | cut -d '=' -f2`
+if [ "`grep SCHED=1 $ELEX_CONF`" ]; then
+  echo cfq > /sys/block/mmcblk0/queue/scheduler;
+  echo CFQ io scheduler >> $ELEX_LOGFILE;
+elif [ "`grep SCHED=2 $ELEX_CONF`" ]; then
+  echo row > /sys/block/mmcblk0/queue/scheduler;
+  echo ROW io scheduler >> $ELEX_LOGFILE;
+elif [ "`grep SCHED=4 $ELEX_CONF`" ]; then
+  echo fiops > /sys/block/mmcblk0/queue/scheduler;
+  echo FIOPS io scheduler >> $ELEX_LOGFILE;
+elif [ "`grep SCHED=5 $ELEX_CONF`" ]; then
+  echo sio > /sys/block/mmcblk0/queue/scheduler;
+  echo SIO io scheduler >> $ELEX_LOGFILE;
+elif [ "`grep SCHED=6 $ELEX_CONF`" ]; then
+  echo bfq > /sys/block/mmcblk0/queue/scheduler;
+  echo BFQ io scheduler >> $ELEX_LOGFILE;
+elif [ "`grep SCHED=7 $ELEX_CONF`" ]; then
+  echo noop > /sys/block/mmcblk0/queue/scheduler;
+  echo noop io scheduler >> $ELEX_LOGFILE;
+else
+  echo deadline > /sys/block/mmcblk0/queue/scheduler;
+  echo deadline io scheduler >> $ELEX_LOGFILE;
+fi
+
+sleep 25
+
+#GPU Frequency settings
+if [ "`grep GPU_OC=0 $ELEX_CONF`" ]; then
+  echo Stock GPU >> $ELEX_LOGFILE;
+else
+  echo 450000000 > /sys/devices/platform/kgsl-3d0.0/kgsl/kgsl-3d0/max_gpuclk;
+  echo 450000000 > /sys/devices/platform/kgsl-3d0.0/kgsl/kgsl-3d0/gpuclk;
+fi
+
+sleep 3
+
+if [ "`grep GPU_OC=410 $ELEX_CONF`" ]; then
+  echo 409500000 > /sys/devices/platform/kgsl-3d0.0/kgsl/kgsl-3d0/max_gpuclk;
+  echo GPU freq 450MHz >> $ELEX_LOGFILE;
+elif [ "`grep GPU_OC=450 $ELEX_CONF`" ]; then
+  echo 450000000 > /sys/devices/platform/kgsl-3d0.0/kgsl/kgsl-3d0/max_gpuclk;
+  echo GPU freq 477MHz >> $ELEX_LOGFILE;
+elif [ "`grep GPU_OC=477 $ELEX_CONF`" ]; then
+  echo 477000000 > /sys/devices/platform/kgsl-3d0.0/kgsl/kgsl-3d0/max_gpuclk;
+  echo GPU freq 477MHz >> $ELEX_LOGFILE;
+elif [ "`grep GPU_OC=491 $ELEX_CONF`" ]; then
+  echo 490500000 > /sys/devices/platform/kgsl-3d0.0/kgsl/kgsl-3d0/max_gpuclk;
+  echo GPU freq 491MHz >> $ELEX_LOGFILE;
+elif [ "`grep GPU_OC=504 $ELEX_CONF`" ]; then
+  echo 504000000 > /sys/devices/platform/kgsl-3d0.0/kgsl/kgsl-3d0/max_gpuclk;
+  echo GPU freq 504MHz >> $ELEX_LOGFILE;
+elif [ "`grep GPU_OC=531 $ELEX_CONF`" ]; then
+  echo 531000000 > /sys/devices/platform/kgsl-3d0.0/kgsl/kgsl-3d0/max_gpuclk;
+  echo GPU freq 531MHz >> $ELEX_LOGFILE;
+elif [ "`grep GPU_OC=555 $ELEX_CONF`" ]; then
+  echo 558000000 > /sys/devices/platform/kgsl-3d0.0/kgsl/kgsl-3d0/max_gpuclk;
+  echo GPU freq 558MHz >> $ELEX_LOGFILE;
+elif [ "`grep GPU_OC=585 $ELEX_CONF`" ]; then
+  echo 585000000 > /sys/devices/platform/kgsl-3d0.0/kgsl/kgsl-3d0/max_gpuclk;
+  echo GPU freq 585MHz >> $ELEX_LOGFILE;
+fi
+
+if [ -e /system/bin/pnpmgr ]; then
+  chmod 444 /sys/devices/platform/kgsl-3d0.0/kgsl/kgsl-3d0/max_gpuclk;
+fi
+
+#gboost
+if [ "`grep GBOOST=0 $ELEX_CONF`" ]; then
+  echo 0 >  /sys/devices/system/cpu/cpufreq/ondemand/gboost;
+  echo gboost disabled >> $ELEX_LOGFILE;
+fi
+
+#mpdecision settings
+if [ "`grep MPDEC=1 $ELEX_CONF`" ]; then
+  echo "0 2.0 3.1 4.5" > /sys/power/pnpmgr/hotplug/mp_nw;
+  echo "0 1.1 2.1 3.5" > /sys/power/pnpmgr/hotplug/mp_ns;
+  echo "0 140 140 140" > /sys/power/pnpmgr/hotplug/mp_tw;
+  echo Mpdecision battery >> $ELEX_LOGFILE;
+elif [ "`grep MPDEC=2 $ELEX_CONF`" ]; then
+  echo "0 1.9 2.5 3.5" > /sys/power/pnpmgr/hotplug/mp_nw;
+  echo "0 0.9 1.9 3.0" > /sys/power/pnpmgr/hotplug/mp_ns;
+  echo "0 90 90 90" > /sys/power/pnpmgr/hotplug/mp_tw;
+  echo Mpdecision performance >> $ELEX_LOGFILE;
+fi
+
+
+#mpdecision settings
+if [ "`grep MPDEC=1 $ELEX_CONF`" ]; then
+  echo "0 2.0 3.1 4.5" > /sys/power/pnpmgr/hotplug/mp_nw;
+  echo "0 1.1 2.1 3.5" > /sys/power/pnpmgr/hotplug/mp_ns;
+  echo "0 140 140 140" > /sys/power/pnpmgr/hotplug/mp_tw;
+  echo Mpdecision battery >> $ELEX_LOGFILE;
+elif [ "`grep MPDEC=2 $ELEX_CONF`" ]; then
+  echo "0 1.9 2.5 3.5" > /sys/power/pnpmgr/hotplug/mp_nw;
+  echo "0 0.9 1.9 3.0" > /sys/power/pnpmgr/hotplug/mp_ns;
+  echo "0 90 90 90" > /sys/power/pnpmgr/hotplug/mp_tw;
+  echo Mpdecision performance >> $ELEX_LOGFILE;
+fi
+
+#GPU Governor settings
+if [ "`grep GPU_GOV=2 $ELEX_CONF`" ]; then
+  echo simple > /sys/devices/platform/kgsl-3d0.0/kgsl/kgsl-3d0/pwrscale/trustzone/governor;
+  chmod 444 /sys/devices/platform/kgsl-3d0.0/kgsl/kgsl-3d0/pwrscale/trustzone/governor;
+  echo Simple GPU Governor >> $ELEX_LOGFILE;
+elif [ "`grep GPU_GOV=3 $ELEX_CONF`" ]; then
+  echo performance > /sys/devices/platform/kgsl-3d0.0/kgsl/kgsl-3d0/pwrscale/trustzone/governor;
+  echo Performance GPU Governor >> $ELEX_LOGFILE;
+else
+  echo Ondemand GPU Governor >> $ELEX_LOGFILE;
+fi
+
+if [ "`grep LOGO2MENU=1 $ELEX_CONF`" ]; then
+  until [ `pidof com.android.systemui` ]; do
+    sleep 1
+  done;
+  setprop persist.sys.navbar.hide true
+fi
+
+#update saved config
+cp /system/etc/elementalx.conf /sdcard/.elementalx.backup
+
+exit 0
